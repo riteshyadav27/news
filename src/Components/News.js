@@ -7,26 +7,31 @@ export class News extends Component {
 
 
   static defaultProps = {
-    country:"in",
-    pageSize:9,
-    apiKey:"588344c11c6341a694bd8e565b92f90c",
-    category:'general'
+    country: "in",
+    pageSize: 9,
+    apiKey: "588344c11c6341a694bd8e565b92f90c",
+    category: 'general'
   }
 
   static propTypes = {
-    country:PropTypes.string,
-    pageSize:PropTypes.number,
-    apiKey:PropTypes.string,
-    category:PropTypes.string
+    country: PropTypes.string,
+    pageSize: PropTypes.number,
+    apiKey: PropTypes.string,
+    category: PropTypes.string
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       articles: [],
       loading: false,
       page: 1,
     }
+    document.title = `Taaza Khabar - ${this.capitalizeFirstLetter(this.props.category)}`
+  }
+
+  capitalizeFirstLetter = (string)=> {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   async componentDidMount() {
@@ -50,8 +55,8 @@ export class News extends Component {
       loading: false
     })
   }
-  handlenextclick = async () => {
 
+  handlenextclick = async () => {
     let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true })
     let data = await fetch(url);
@@ -69,12 +74,12 @@ export class News extends Component {
     return (
       <div>
         <div className='container my-4'>
-          <h3>Taaza Khabar : Top Headlines</h3>
+          <h3>Taaza Khabar : Top {this.capitalizeFirstLetter(this.props.category)} Headlines</h3>
           {this.state.loading && <Spinner />}
           <div className='row my-3'>
             {!this.state.loading && this.state.articles.map((element) => {
               return <div className='col-md-4' key={element.url}>
-                <NewsItem title={element.title} description={element.description} imgsrc={element.urlToImage} newsurl={element.url} />
+                <NewsItem title={element.title} description={element.description} imgsrc={element.urlToImage} newsurl={element.url} author={element.author} time={element.publishedAt} />
               </div>
             })}
 
