@@ -10,14 +10,12 @@ export class News extends Component {
   static defaultProps = {
     country: "in",
     pageSize: 6,
-    apiKey: "588344c11c6341a694bd8e565b92f90c",
     category: 'general'
   }
 
   static propTypes = {
     country: PropTypes.string,
     pageSize: PropTypes.number,
-    apiKey: PropTypes.string,
     category: PropTypes.string
   }
 
@@ -25,7 +23,7 @@ export class News extends Component {
     super(props);
     this.state = {
       articles: [],
-      loading: false,
+      loading: true,
       page: 1,
       totalResults: 0
     }
@@ -41,8 +39,12 @@ export class News extends Component {
     this.setState({ loading: true })
     let data = await fetch(url);
     let parsedData = await data.json();
-    console.log(parsedData);
-    this.setState({ articles: parsedData.articles, totalResults: parsedData.totalResults, loading: false })
+    // console.log(parsedData);
+    this.setState({ 
+      articles: parsedData.articles,
+      totalResults: parsedData.totalResults,
+      loading: false 
+    })
   }
 
   handleprevclick = async () => {
@@ -77,9 +79,12 @@ export class News extends Component {
     this.setState({ loading: true })
     let data = await fetch(url);
     let parsedData = await data.json();
-    console.log(parsedData);
+    // console.log(parsedData);
     this.setState({
-      articles: this.state.articles.concat(parsedData.articles), totalResults: parsedData.totalResults, loading: false, page: this.state.page + 1
+      articles: this.state.articles.concat(parsedData.articles),
+      totalResults: parsedData.totalResults,
+      loading: false,
+      page: this.state.page + 1
     })
   }
 
@@ -88,14 +93,16 @@ export class News extends Component {
     return (
       <div className='container my-4'>
 
-        <h3>Taaza Khabar : Top {this.capitalizeFirstLetter(this.props.category)} Headlines</h3>
+        <h3 style={{marginTop:"90px"}}>Taaza Khabar : Top {this.capitalizeFirstLetter(this.props.category)} Headlines</h3>
+
         {this.state.loading && <Spinner />}
 
         <InfiniteScroll
           dataLength={this.state.articles.length}
           next={this.fetchMoreData}
-          hasMore={this.state.articles.length !== this.state.totalResults}
+          hasMore={this.state.articles.length !== this.state.totalResults} // Replace with a condition based on your data source
           loader={<Spinner />}
+          // endMessage={<p>No more data to load.</p>}
         >
           <div className='container'>
             <div className='row my-3'>
